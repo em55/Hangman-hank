@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<title>Number Guesser</title>
 		<style>
 			body {
 				background: blue;
@@ -9,13 +10,14 @@
 
 	</head>
 	<body>
-		
-		
-			<p>
 
-				"THE SECRET NUMBER IS <%= x %>"
-
-			</p>
+		<p> Guess the secret number </p>
+			
+		<p>
+			<% if cheat %>
+				"CHEAT MODE! <br> The secret number is <%= x %>...shhh!"
+			<% end %>
+		</p>
 
 	
 
@@ -27,7 +29,6 @@
 		</form>
 
 		<p>
-
 			"<%= m %>"
 		</p>
 

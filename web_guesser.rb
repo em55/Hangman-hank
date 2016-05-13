@@ -1,16 +1,18 @@
 require 'sinatra'
-require 'sinatra/reloader'
+require 'sinatra/reloader' 
 
 
 @@x = rand(100)
 @@guess_count = 5
+cheat = false
 
 get '/' do
 	
 	guess = params['guess'].to_i
+	cheat = params['cheat']
 	m = check_guess(@@x,guess)
 	x = @@x
-	erb :index, :locals => {:x => x, :m => m}
+	erb :index, :locals => {:x => x, :m => m, :cheat => cheat}
 
 end
 
@@ -23,7 +25,8 @@ def check_guess(n,g)
 			@@guess_count = 5
 			@@x = rand(100)
 			return "<style> body { background: green;} </style> 
-					You got it right! <br> The secret number is #{n}" 
+					You got it right! <br> The secret number is #{n}
+					<br>A new number has been generated - Play again!" 
 		elsif diff < -5
 			
 			return "<style> body { background: red;} </style>
