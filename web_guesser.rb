@@ -1,52 +1,87 @@
 require 'sinatra'
 require 'sinatra/reloader' 
 
-
-@@x = rand(100)
 @@guess_count = 5
-cheat = false
 
 get '/' do
-	
-	guess = params['guess'].to_i
-	cheat = params['cheat']
-	m = check_guess(@@x,guess)
-	x = @@x
-	erb :index, :locals => {:x => x, :m => m, :cheat => cheat}
-
+	erb :index
 end
 
-def check_guess(n,g)
-	
-	diff = g - n
-	@@guess_count -= 1
-	if(@@guess_count > 0)
-		if diff == 0
-			@@guess_count = 5
-			@@x = rand(100)
-			return "<style> body { background: green;} </style> 
-					You got it right! <br> The secret number is #{n}
-					<br>A new number has been generated - Play again!" 
-		elsif diff < -5
-			
-			return "<style> body { background: red;} </style>
-					Way too low!"
-		elsif diff > 5
-			return "<style> body { background: red;} </style>
-					Way too high!"
-		elsif (diff > 0 && diff <=5)
-			return "<style> body { background: pink; color: black;} </style>
-					Too high!"
-		elsif (diff < 0 && diff >= -5)
-			
-			return "<style> body { background: pink; color: black;} </style>
-					Too low!"
-		end
+post '/' do 
+	@@level = params['level'].to_i + 1
+	@@word = get_word(@@level).split " "
+	@@dash = Array.new(@@level, '____  ')
+	word = @@word
+	dash = @@dash
+	g = @@guess_count
+	m = "Yo B)"
+	erb :game, :locals => {:g => g, :m => m, :dash => dash, :word => word}
+end
 
-	elsif (@@guess_count == 0 && diff !=0)
-		@@guess_count = 5
-		@@x = rand(100)
-		return "You have lost :(  <br> But, don't ya worry =D <br> A new number has been generated - Try again!"
+get '/game' do
+
+	@@letter = params['letter']
+	m = check_guess(@@letter)
+	g = @@guess_count
+	erb :game, :locals => {:g => g, :m => m, :dash => dash, :word => word}
+end
+
+post '/game' do
+
+	@@letter = params['letter']
+	m = check_guess(@@letter)
+	g = @@guess_count
+	erb :game, :locals => {:g => g, :m => m, :dash => dash, :word => word}
+end
+
+def get_word(len)
+
+	f = File.open("enable.txt")
+	line = f.readline
+	while (line && !f.eof?) do
+		
+			if(line.size.eql?(len))	
+				return line
+	
+			else
+				x = rand(172823)
+				f.pos = x
+				line = f.readline
+
+			end
+		
+	end
+	f.close
+end
+
+def check_guess(l)
+		
+	while dash.include? "____  " do
+		if @@guess_count == 0
+			return "You have lost :(  <br> But, don't ya worry =D 
+				<br> A new word has been generated - Try again!"
+		else
+	
+			if  word.include? l
+				@@guess_count -= 1
+				i = word.each_index.select{|i| word[i] == l}
+				i.each do |a|
+					dash[a] = word[a]
+				end
+				#p dash.join
+				#p "Guesses: #{guess}"
+
+			else
+				@@guess_count -= 1
+				#p "Guesses: #{guess}"
+			end
+		end
+	end	
+
+	if !dash.include? "____  "
+		return "<style> body { background: green;} </style> 
+					You got it right! <br> The secret number is #{n}
+					<br>A new word has been generated - Play again!"
 	end
 
 end

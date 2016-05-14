@@ -1,0 +1,25 @@
+
+	<p> The word is <%= word %> </p>
+
+	<p>Type in a letter!</p>
+		<form action="/game/" method="GET">
+
+			<input type='text' size='2' maxlength='1' name='letter' />
+			<input type='submit' value='Guess!' />
+
+		</form>
+	
+	<div style="margin-top: 50px">
+		<%= dash.join %>
+		</div>
+	
+
+
+	<br>
+	<p> Guesses left: <%= g %> </p>
+	<br>
+
+	<p>
+		<%= m %>
+	</p>
+
