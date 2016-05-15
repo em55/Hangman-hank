@@ -1,9 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader' 
 
-
-set :port, 8080
-
 @@guess = 5
 @@dash = []
 @@m_guess = []
@@ -36,23 +33,38 @@ post '/game/' do
 	
 	if @@guess == 1
 		m = "You have lost"
+		if !@@word.include? l
+			@@m_guess.insert(@@m_guess.length, l) 
+		else
+			i = @@word.each_index.select{|i| @@word[i] == l}
+				i.each do |a|
+					@@dash[a] = l
+				end
+		end
 		d = @@dash.join
 		word = @@word
 		g = @@guess
 		m_guess = @@m_guess
 	else
 		if  @@word.include? l
-			@@guess = @@guess - 1
-			i = @@word.each_index.select{|i| @@word[i] == l}
-			i.each do |a|
-				@@dash[a] = l
+			if @@dash.include? l
+				m = "You have already tried this letter. Try a different one!"
+				d = @@dash.join
+				g = @@guess
+				m_guess = @@m_guess
+				word = @@word
+			else
+				@@guess = @@guess - 1
+				i = @@word.each_index.select{|i| @@word[i] == l}
+				i.each do |a|
+					@@dash[a] = l
+				end
+				m = "Good job! Keep going!"
+				d = @@dash.join
+				g = @@guess
+				m_guess = @@m_guess
+				word = @@word
 			end
-			m = "Good job! Keep going!"
-			d = @@dash.join
-			g = @@guess
-			m_guess = @@m_guess
-			word = @@word
-			
 		else
 			if @@m_guess.include? l
 				m = "You have already tried this letter. Try a different one!"
