@@ -4,21 +4,20 @@ require 'sinatra/reloader'
 
 set :port, 8080
 
-@@guess = 4
+@@guess = 5
 @@dash = []
 @@m_guess = []
 
-
 get '/' do
-	@@guess = 4
+	@@guess = 5
 	@@m_guess = []
 	erb :index
 end
 
 post '/' do 
 	@@level = params['level'].to_i + 1
-	@@word = get_word(@@level).split " "
-	@@dash = Array.new(@@level, '____  ')
+	@@word = get_word(@@level).split ""
+	@@dash = Array.new(@@level-1, '____  ')
 	redirect '/game/'
 end
 
@@ -35,7 +34,7 @@ post '/game/' do
 	@@letter = params['letter']
 	l = @@letter				
 	
-	if @@guess == 0
+	if @@guess == 1
 		m = "You have lost"
 		d = @@dash.join
 		word = @@word
@@ -52,6 +51,7 @@ post '/game/' do
 			d = @@dash.join
 			g = @@guess
 			m_guess = @@m_guess
+			word = @@word
 			
 		else
 			if @@m_guess.include? l
@@ -75,6 +75,7 @@ post '/game/' do
 
 	if !@@dash.include? "____  "
 		m = "You have won!"
+		word = @@word
 	end
 
 	erb :game, :locals => {:g => g, :m => m, :d => d, :word => word, :m_guess => m_guess}

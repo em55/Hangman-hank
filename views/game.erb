@@ -19,15 +19,21 @@
 
 	<br>
 	<% if m == "You have lost" %>
-	<p> Guesses left: <%= g %> </p>
+	<p> Guesses left: <%= g-1 %> </p>
 	<% else %>
-	<p> Guesses left: <%= g+1 %> </p>
+	<p> Guesses left: <%= g %> </p>
 	<% end %>
 	<br>
-	
+
 	<p>	<%= m %></p>
 
-	<% if m == "You have lost" %>
+	<% if m == "You have won!" %>
+		The word is <%=  word.join.split " " %>
+	<% end %>
+
+<br><br>
+	<% if m == "You have lost" || m == "You have won!" %>
 		<a href="/" style="color: white;">Begin again!</a>
 	<% end %>
+
 	
