@@ -1,5 +1,5 @@
 
-	<p> The word is <%= word %> </p>
+	
 
 	<p>Type in a letter!</p>
 		<form action="/game/" method="POST">
@@ -18,7 +18,7 @@
 		</div>
 
 	<br>
-	<% if m == "You have lost" %>
+	<% if m == "You have lost" || m == "You have won!" %>
 	<p> Guesses left: <%= g-1 %> </p>
 	<% else %>
 	<p> Guesses left: <%= g %> </p>
@@ -37,3 +37,4 @@
 	<% end %>
 
 	
+	<p style="color: #4b0062"> The word is <%= word.join %> </p>

@@ -21,7 +21,7 @@ end
 get '/game/' do
 	
 
-	g, m, d, m_guess, word = @@guess, "start", @@dash.join, @@m_guess, @@word
+	g, m, d, m_guess, word = @@guess, "", @@dash.join, @@m_guess, @@word
 
 	erb :game, :locals => {:g => g, :m => m, :d => d, :word => word, :m_guess => m_guess}
 end
@@ -48,7 +48,7 @@ post '/game/' do
 	else
 		if  @@word.include? l
 			if @@dash.include? l
-				m = "You have already tried this letter. Try a different one!"
+				m = "You've already tried this letter. Try a different one!"
 				d = @@dash.join
 				g = @@guess
 				m_guess = @@m_guess
@@ -67,7 +67,7 @@ post '/game/' do
 			end
 		else
 			if @@m_guess.include? l
-				m = "You have already tried this letter. Try a different one!"
+				m = "You've already tried this letter. Try a different one!"
 				d = @@dash.join
 				g = @@guess
 				m_guess = @@m_guess
@@ -96,25 +96,16 @@ end
 helpers do
 	def get_word(len)
 
-		f = File.open("enable.txt")
-		line = f.readline.chomp
-		while (line && !f.eof?) do
-			
-				if(line.size.eql?(len))	
-					return line
+		arr = []
+		File.open("enable.txt").readlines.each_with_index do |line|
 		
-				else
-					x = rand(172823)
-					f.pos = x
-					line = f.readline
-
-				end
-			
+			if(line.size.eql?(len))	
+				arr.insert(arr.length,line)
+			end
 		end
-		f.close
-	end
 
-	
+	return arr[rand(arr.length)]
+	end
 end
 
 
