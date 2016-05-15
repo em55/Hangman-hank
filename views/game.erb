@@ -2,7 +2,7 @@
 	<p> The word is <%= word %> </p>
 
 	<p>Type in a letter!</p>
-		<form action="/game/" method="GET">
+		<form action="/game/" method="POST">
 
 			<input type='text' size='2' maxlength='1' name='letter' />
 			<input type='submit' value='Guess!' />
@@ -10,16 +10,24 @@
 		</form>
 	
 	<div style="margin-top: 50px">
-		<%= dash.join %>
+		<%= d %>
 		</div>
-	
 
+	<div style="margin-top: 50px">
+		Misses: <%= m_guess %>
+		</div>
 
 	<br>
+	<% if m == "You have lost" %>
 	<p> Guesses left: <%= g %> </p>
+	<% else %>
+	<p> Guesses left: <%= g+1 %> </p>
+	<% end %>
 	<br>
+	
+	<p>	<%= m %></p>
 
-	<p>
-		<%= m %>
-	</p>
-
+	<% if m == "You have lost" %>
+		<a href="/" style="color: white;">Begin again!</a>
+	<% end %>
+	

@@ -4,11 +4,14 @@ require 'sinatra/reloader'
 
 set :port, 8080
 
-@@guess_count = 5
+@@guess = 4
 @@dash = []
+@@m_guess = []
+
 
 get '/' do
-
+	@@guess = 4
+	@@m_guess = []
 	erb :index
 end
 
@@ -16,22 +19,65 @@ post '/' do
 	@@level = params['level'].to_i + 1
 	@@word = get_word(@@level).split " "
 	@@dash = Array.new(@@level, '____  ')
-	word = @@word
-	dash = @@dash
-	g = @@guess_count
-	m = "Yo! B)"
-	erb :game, :locals => {:g => g, :m => m, :dash => dash, :word => word}
+	redirect '/game/'
 end
 
 get '/game/' do
 	
-	@@letter = params['letter']
-	
-	m, g, dash = check_guess(@@letter)
-	
-	word = @@word
-	erb :game, :locals => {:g => g, :m => m, :dash => dash, :word => word}
 
+	g, m, d, m_guess, word = @@guess, "start", @@dash.join, @@m_guess, @@word
+
+	erb :game, :locals => {:g => g, :m => m, :d => d, :word => word, :m_guess => m_guess}
+end
+
+post '/game/' do
+	
+	@@letter = params['letter']
+	l = @@letter				
+	
+	if @@guess == 0
+		m = "You have lost"
+		d = @@dash.join
+		word = @@word
+		g = @@guess
+		m_guess = @@m_guess
+	else
+		if  @@word.include? l
+			@@guess = @@guess - 1
+			i = @@word.each_index.select{|i| @@word[i] == l}
+			i.each do |a|
+				@@dash[a] = l
+			end
+			m = "Good job! Keep going!"
+			d = @@dash.join
+			g = @@guess
+			m_guess = @@m_guess
+			
+		else
+			if @@m_guess.include? l
+				m = "You have already tried this letter. Try a different one!"
+				d = @@dash.join
+				g = @@guess
+				m_guess = @@m_guess
+				word = @@word
+			else
+				@@m_guess.insert(@@m_guess.length, l)
+				@@guess = @@guess - 1
+				m = "Its alright, keep going!"
+				d = @@dash.join
+				g = @@guess
+				word = @@word
+				m_guess = @@m_guess
+			end
+		end
+	end
+	
+
+	if !@@dash.include? "____  "
+		m = "You have won!"
+	end
+
+	erb :game, :locals => {:g => g, :m => m, :d => d, :word => word, :m_guess => m_guess}
 end
 
 helpers do
@@ -55,41 +101,7 @@ helpers do
 		f.close
 	end
 
-	def check_guess(l)
-			
-		while @@dash.include? "____  " do
-			if @@guess_count == 1
-				@@guess_count = 5
-				return "You have lost! :(  <br> But, don't ya worry =D 
-					<br> Try again!", 0, @@dash
-			else
-		
-				if  @@word.include? l
-					@@guess_count -= 1
-					i = @@word.each_index.select{|i| @@word[i] == l}
-					i.each do |a|
-						@@dash[a] = @@word[a]
-					end
-					return "Good job! Keep going!",@@guess_count, @@dash
-					#p dash.join
-					#p "Guesses: #{guess}"
-
-				else
-					@@guess_count -= 1
-					return "Its alright, keep going!", @@guess_count, @@dash
-					#p "Guesses: #{guess}"
-				end
-			end
-		end	
-
-		if !@@dash.include? "____  "
-			@@guess_count = 5
-			return "<style> body { background: green;} </style> 
-						You got it right! <br> The word is #{@@word}
-						<br>A new word has been generated - Play again!", @@guess_count, @@dash
-		end
-
-	end
+	
 end
 
 
